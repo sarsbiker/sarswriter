@@ -1,0 +1,78 @@
+---
+layout: default
+---
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+<div id="status">
+	<h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+	<!-- <span>{{ page.date | date: "%b %d, %Y" }}  by <a href="{{site.url}}/about"> {{ page.author }} </a></span> -->
+	<span class="post-meta">
+		<time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %d, %Y" }}</time>
+		{% if page.author == site.site_author %} by
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person">
+			<span itemprop="name"><a href="{{site.url}}/about"> {{ page.author }} </a>
+			</span>
+		</span>
+		{% else %}
+		<span itemprop="author" itemscope itemtype="http://schema.org/Person">
+			<span itemprop="name"><a href=""> {{ page.author }} </a>
+			</span>
+		</span>
+		{% endif %}
+	</span>
+
+	{% if page.tags != empty %}
+		<span class="tags">
+			<span class="post-meta">  Tag：</span>
+			{% for tag in page.tags %}
+			  <a href="{{ site.baseurl }}{{ site.tags_path }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+			{% endfor %}
+		</span>
+	{% endif %}
+
+	{% if site.leancloud.enable %}
+		<span id="{{ page.url }}" class="leancloud_visitors" data-flag-title="{{ page.title }}">
+		 <span class="post-meta-divider">|</span>
+		 <span class="post-meta-item-text"> Hits:  </span>
+		 <span class="leancloud-visitors-count"></span>
+		</span>
+	{% endif %}
+
+	{% if page.categories != empty %}
+		<p class="category">
+			<span class="post-meta"> Category：</span>
+			{% for category in page.categories %}
+			  <a href="{{ site.baseurl }}{{ site.category_path }}#{{ category | slugify }}" class="post-tag">{{ category }}</a>
+			{% endfor %}
+		</p>
+	{% endif %}
+
+</div>
+	<br>
+<div id="post" class="post-content" itemprop="articleBody">
+{{ content }}
+</div>
+
+<div >
+	（全文完）
+</div>
+
+<div>
+	 <br><br>
+	 版权声明： <br>
+	 本文为 {{ page.author }} 原创文章，转载请注明出处，请勿用于任何商业用途。
+	 <br>
+	 本站原创作品采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">知识共享 署名-非商业性使用-禁止演绎 4.0 国际许可协议（CC BY-NC-ND 4.0）</a> 进行许可。
+</div>
+
+<div id="related">
+	<br><br>
+  <h2>Related Posts</h2>
+    <ul class="posts">
+	    {% for post in site.related_posts limit:5 %}
+        <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+	    {% endfor %}
+	</ul>
+</div>
+
+</article>
