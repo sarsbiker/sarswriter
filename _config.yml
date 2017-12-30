@@ -16,7 +16,7 @@
 title: 写作者
 email: sarsbiker#qq.com (# -> @)
 description: > # this means to ignore newlines until "baseurl:"
-  创作者
+  作为测试的一个小博客
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://writer.abing.info" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: lyisice
@@ -61,6 +61,6 @@ tags_path: /blog/tags/
 category_path: /blog/categories/
 
 leancloud:
-  enable: true
+  enable: false
   app_id:
   app_key:
