@@ -123,6 +123,7 @@ author:
 
 
 # Reading Files
+include: ["_pages"]
 include:
   - .htaccess
   - _pages
@@ -226,10 +227,10 @@ tag_archive:
   type: liquid
   path: /tags/
 # https://github.com/jekyll/jekyll-archives
-# jekyll-archives:
-#   enabled:
-#     - categories
-#     - tags
+jekyll-archives:
+   enabled:
+     - categories
+     - tags
 #   layouts:
 #     category: archive-taxonomy
 #     tag: archive-taxonomy
@@ -259,3 +260,12 @@ defaults:
       comments: # true
       share: true
       related: true
+
+defaults:
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
