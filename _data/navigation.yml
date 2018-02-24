@@ -4,6 +4,8 @@ main:
     url: http://abing.info
   - title: "关于我"
     url: /about.html
+  - title: "标签汇总"
+    url: /tags/
   # - title: "About"
   #   url: https://mmistakes.github.io/minimal-mistakes/about/
   # - title: "Sample Posts"
