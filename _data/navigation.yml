@@ -1,11 +1,13 @@
 # main links
 main:
-  - title: "个人主页"
-    url: http://abing.info
+#  - title: "个人主页"
+#    url: http://abing.info
   - title: "关于我"
     url: /about.html
   - title: "标签汇总"
     url: /tags/
+  - title: "分类汇总"
+    url: /categories/
   # - title: "About"
   #   url: https://mmistakes.github.io/minimal-mistakes/about/
   # - title: "Sample Posts"

@@ -3,6 +3,7 @@ title: "关于我"
 excerpt: "好像也没啥好写的"
 sitemap: false
 permalink: /about.html
+layout: single
 ---
 # 关于我
 ### 简介
