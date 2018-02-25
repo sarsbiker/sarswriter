@@ -209,6 +209,11 @@ whitelist:
   - jekyll-feed
   - jemoji
 
+deploy:
+type: git
+repo: <https://github.com/sarsbiker/sarswriter.git>
+branch: [gh-pages]
+message: [message]
 
 # Archives
 #  Type
