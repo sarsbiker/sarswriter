@@ -1,7 +1,7 @@
 ---
 layout: archive
 permalink: /tags/
-title: "Posts by Tag"
+title: "按标签查看"
 author_profile: true
 ---
 
