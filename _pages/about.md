@@ -5,7 +5,6 @@ sitemap: false
 permalink: /about.html
 layout: single
 ---
-# 关于我
 ### 简介
 从事互联网产品运营工作，擅长数据分析
 喜户外运动，徒步、骑行、越野
