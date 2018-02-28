@@ -6,6 +6,7 @@ categories:
 tags:
   - 博客
   - bugs
+  - github
 ---
 >使用github pages + jekyll搭建的博客
 
