@@ -1,0 +1,52 @@
+<!--{eval
+    $_HEAD['title'] = $subject[name].'_关于我们';
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+<div class="item-content">
+
+    <div class="mt10">
+
+        <div class="item-rail about_content">
+            <h3 class="railtitle">$fullname</h3>
+
+            <!--{if $subject_detailfield}-->
+                <table class="custom_field"  border="0" cellspacing="0" cellpadding="0">
+                    $subject_detailfield
+                    <tr>
+                        <td class='key' align='left'>数据统计：</td>
+                        <td width="*">
+                            <span class="font_2">$subject[pageviews]</span>次浏览,<span class="font_2">$subject[reviews]</span>条点评,<span class="font_2">$subject[guestbooks]</span>条留言,<span class="font_2">$subject[pictures]</span>张图片,<span class="font_2">$subject[favorites]</span>个关注{if $subject[products]},<span class="font_2">$subject[products]</span>个产品{/if}
+                        </td>
+                    </tr>
+                </table>
+            <!--{/if}-->
+
+            <!--{if $model[usearea] && $fields[mappoint][show_detail]}-->
+            <div class="aboutmap">
+                <!--{eval $mapparam = array(
+                    'title' => $subject[name] . $subject[subname],
+                    'show' => $subject[mappoint]?1:0,
+                );}-->
+                <iframe src="{url index/map/width/930/height/350/title/$mapparam[title]/p/$subject[mappoint]/show/$mapparam[show]}" frameborder="0" scrolling="no" width="100%" style="height:350px;*width:100%; _width:99%;"></iframe>
+                <div style="text-align:center;">
+                    <!--{if !$subject['mappoint']}-->
+                    <a href="javascript:post_map($subject[sid], $subject[pid]);">地图未标注，我来标注</a>
+                    <!--{/if}-->
+                </div>
+            </div>
+             <!--{/if}-->
+        </div>
+
+        <!--{loop $textarea_field $field}-->
+        <div class="mainrail rail-border-3 mt10">
+            <!--{if $subject[$field[fieldname]]}-->
+            <h3 class="rail-h-3 rail-h-bg-3">$field[title]</h3>
+            <div style="margin:10px;" id="textarea_$field[fieldname]"{if $catcfg[detail_content_hide]} style="display:none;"{/if}>$subject[$field[fieldname]]</div>
+            <!--{/if}-->
+        </div>
+        <!--{/loop}-->
+
+    </div>
+
+</div>
+<!--{template 'footer', 'item', $subject[templateid]}-->

@@ -1,0 +1,23 @@
+<!--{eval
+    $_HEAD['title'] = $subject[name]."的关联小组";
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+<style type="text/css">@import url("{URLROOT}/{$_G[tplurl]}css_fenlei.css");</style>
+<div class="item-content">
+    <div class="item-left mt10">
+        <div class="item-rail">
+            <h3 class="railtitle">小组($total)</h3>
+            <div>
+            {if $total > 0}
+                {template group_part_list}
+            {/if}
+            </div>
+            {if $multipage}<div class="multipage">$multipage</div>{/if}
+        </div>
+    </div>
+    <div class="item-right mt10">
+        <!--{template 'part_side', 'item', $subject[templateid]}-->
+    </div>
+    <div class="clear"></div>
+</div>
+<!--{template 'footer', 'item', $subject[templateid]}-->

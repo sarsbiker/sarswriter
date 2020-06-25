@@ -1,0 +1,143 @@
+<!--{eval
+    $_HEAD['title'] = $pic[title] . '|'. $album[name]. '图片浏览';
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+<div class="item-content">
+
+    <div class="item-left mt10">
+
+		<div class="main-rail rail-border-3 pic-foo">
+			<div class="pic-nav" style="width:165px;margin:20px auto;">
+				<a class="abtn2" id="lefturl" href="$lefturl"><span>上一张</span></a>
+				<a class="abtn2" id="righturl" href="$righturl"><span>下一张</span></a>
+				<div class="clear"></div>
+			</div>
+			<div style="margin:10px 0;text-align:center;">{if $pic[url]}<span><a href="http://$pic[url]" target="_blank">点击进入图片链接</a></span>{/if}</div>
+			<div class="pic-show">
+				<img src="{URLROOT}/$pic[filename]" alt="$pic[title]" onmouseover="upNext(this);" id="showimg" />
+			</div>
+			<div class="pic-info">
+				<h3>$pic[title]</h3>
+				<p class="pic-content">
+					<span><a href="{url space/index/uid/$pic[uid]}">$pic[username]</a> 在 {date $pic[addtime]} 上传于相册《$album[name]》</span><span class="font_3">($p_num/$p_total)</span><br />
+					<p class="pic-content-p">$pic[comments]</p>
+				</p>
+			</div>
+		</div>
+
+		<!--{hook 'load_comment', $comment_cfg}-->
+
+    </div>
+
+    <div class="item-right mt10">
+    	<div class="thumb_nav">
+	    	<div class="thumb_nav_direct"><a href="javascript:;"onclick="thumb_up_next('L');">向上</a></div>
+			<ul id="thumb_nav_foo" class="thumb_nav_foo">
+				{eval $index=0;}
+				{loop $pics $val}
+				<li id="picid_$val[picid]"{if $picid==$val[picid]}class="selected"{/if}>
+					<div class="thumb_box">
+						<a href="{url item/album/picid/$val[picid]}"><img src="{URLROOT}/$val[thumb]" class="image{$index}" alt="$title"></a>
+					</div>
+				</li>
+				{eval $index++;}
+				{/loop}
+			</ul>
+			<div class="clear"></div>
+			<div class="thumb_nav_direct"><a href="javascript:;"onclick="thumb_up_next('R');">向下</a></div>
+    	</div>
+    	<!--{eval $hidemap=true;}-->
+        <!--{template 'part_side', 'item', $subject[templateid]}-->
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+
+<script type="text/javascript">
+	var picid = {$picid};
+	var albumid = {$albumid};
+	var left_num = {eval echo $p_num<=2?1:$p_num-1};
+	var right_num = left_num+3;
+	var p_total = {$p_total};
+	var pic_cache = new Array();
+	function thumb_up_next(direct) {
+		if(!direct) direct='L';
+		if(direct=='L'&&left_num <= 1) {
+			alert('已经是第一张啦。');
+			return;
+		} else if(direct=='R'&&right_num >= p_total) {
+			alert('已经是最后一张啦。');
+			return;
+		}
+		var thumb_start = direct=='L' ? (left_num-1) : (right_num+1);
+		if(pic_cache[thumb_start]) {
+			thumb_reset(direct,pic_cache[thumb_start]);
+			return;
+		}
+	    $.post(Url('item/album'), { 'id':albumid, 'thumb_start':thumb_start, 'in_ajax':1 },
+	    function(result) {
+	        if(result == null) {
+	            alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+	        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+	            myAlert(result);
+	        } else if(result=='NONE') {
+	        	alert('没有图片被加载。');
+	        } else {
+	        	thumb_reset(direct,result);
+	        	pic_cache[thumb_start]=result;
+	        }
+	    });
+	}
+	function thumb_reset(direct,thumb) {
+		var length = $('#thumb_nav_foo > li').children().length;
+		if(direct=='L') {
+			$('#thumb_nav_foo').prepend(thumb);
+			if(length>=4) $('#thumb_nav_foo > li:last-child').remove();
+		} else {
+			$('#thumb_nav_foo').append(thumb);
+			if(length>=4) $('#thumb_nav_foo > li:first-child').remove();
+		}
+    	if(direct == 'L') {
+    		left_num-=1;
+    		right_num-=1;
+    	} else {
+    		left_num+=1;
+    		right_num+=1;
+    	}
+    	$('#thumb_nav_foo > li').each(function(){
+    		if($(this).attr('id')=='picid_'+picid) {
+    			$(this).addClass('selected');
+    		} else {
+    			$(this).removeClass('selected');
+    		}
+    	});
+	}
+
+	function upNext(bigimg) {
+		var lefturl	= $('#lefturl').attr('href');
+		var righturl	= $('#righturl').attr('href');
+		var imgurl	= righturl;
+		var width	= bigimg.width;
+		var height	= bigimg.height;
+		var act 	= '第一张';
+		bigimg.onmousemove = function(){
+			if(event.offsetX<width/2){
+				bigimg.style.cursor	= 'url({URLROOT}/static/images/common/arr_left.cur),auto';
+				imgurl				= lefturl;
+			} else {
+				act = '最后一张';
+				bigimg.style.cursor	= 'url({URLROOT}/static/images/common/arr_right.cur),auto';
+				imgurl				= righturl;
+			}
+		}
+		bigimg.onmouseup = function(){
+			if(!imgurl||imgurl=='#') {
+				alert('已经是'+act+'啦！');
+			} else {
+				jslocation(imgurl);
+			}
+		}
+	}
+	</script>
+<!--{template 'footer', 'item', $subject[templateid]}-->

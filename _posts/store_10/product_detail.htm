@@ -1,0 +1,374 @@
+<!--{eval
+    $_HEAD['title'] = $detail[subject];
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+<!--{template 'product_css', 'item', $subject[templateid]}-->
+
+<div class="item-content">
+
+    <div style="background:none;">
+        <div class="gallery mt10">
+            <!--{eval 
+                $picture = $detail[picture]?$detail[picture]:'static/images/noimg.gif';
+                $thumb = $detail[thumb]?$detail[thumb]:'static/images/noimg.gif';
+            }-->
+            <div class="pic">
+                {if $detail[picture]}
+                <a class="jqzoom" id="spec-n1" rel="gal1" href="{img $picture}"><img src="{img $picture}" style="width:350px;height:250px;" /></a>
+                {else}
+                <img src="{URLROOT}/$picture" style="max-width:380px;max-height:250px;" />
+                {/if}
+            </div>
+            <!--{eval 
+                $pictures = is_serialized($detail['pictures']) ? unserialize($detail['pictures']) : array();
+            }-->
+            <!--{if $pictures}-->
+            <div id="spec-n5">
+                <div class="control" id="spec-left"></div>
+                <div id="spec-list">
+                    <ul class="list-h">
+                        {loop $pictures $pic}
+                        <li><a href='javascript:void(0);' rel="{gallery: gal1', smallimage:'{img $pic}', largeimage:'{img $pic}'}"><img src="{img $pic}"></a></li>
+                        {/loop}
+                    </ul>
+                </div>
+                <div class="control" id="spec-right"></div>
+            </div>
+            <!--{/if}-->
+        </div>
+
+        <div class="detail detail_box mt10">
+            <div class="specific_info">
+                <h3 class="railtitle" style="font-size:18px;">$detail[subject]</h3>
+                <dl class="clear">
+                    <dt>商品价格：</dt>
+                    <dd>
+                        {if $myprice!=$price}
+                        <span class="price f16" style="text-decoration:line-through;">$price</span>元
+                        {else}
+                        <span class="price f24">$price</span>元
+                        {/if}
+                    </dd>
+                </dl>
+                {if $detail[promote]>0 && $_G[timestamp]>$detail[promote_start] && $_G[timestamp]<$detail[promote_end]}
+                <dl class="clear">
+                    <dt>促销价格：</dt>
+                    <dd><span class="price f24">$promote</span>元 优惠<span class="font_2">{print $price-$promote}</span>元&nbsp;活动时间：{date $detail[promote_start],'Y-m-d'} 至 {date $detail[promote_end],'Y-m-d'}</dd>
+                </dl>
+                {/if}
+                {if $user->uid && $vipprice > 0 && $detail[promote] <= 0}
+                <dl class="clear">
+                    <dt>会员折扣：</dt>
+                    <dd><span class="price f24">$vipprice</span> 元（您是 <span class="font_2">{print:member group(groupid/$user->groupid)}</span> 尊享会员优惠<span class="font_2">{print $price-$vipprice}</span>元）</dd>
+                </dl>
+                {/if}
+                <dl class="clear">
+                    <dt>物流运费：</dt>
+                    <dd>
+                        {if !$detail[freight]}
+                        卖家承担运费
+                        {elseif $detail['freight']=='2'}
+                            {if $detail['freight_price_snail']>0}
+                            平邮：{print get_numeric($detail['freight_price_snail'])} 元&nbsp;
+                            {/if}
+                            {if $detail['freight_price_exp']>0}
+                            快递：{print get_numeric($detail['freight_price_exp'])} 元&nbsp;
+                            {/if}
+                            {if $detail['freight_price_ems']>0}
+                            EMS：{print get_numeric($detail['freight_price_ems'])} 元&nbsp;
+                            {/if}
+                        {else}
+                        <!--{get:product shipval=getshippinglist(sid/$subject[sid]/orderby/shipid)}-->
+                        {$shipval[shipname]}：{$shipval[price]} 元&nbsp;
+                        <!--{/get}-->
+                        {/if}
+                        {if $detail[is_cod]}<span class="font_2">支持货到付款</span>{/if}
+                    </dd>
+                </dl>
+                {if $detail[giveintegral] && $MOD[pointgroup]}
+                <dl class="clear">
+                    <dt>赠送积分：</dt>
+                    <dd class="point">$detail[giveintegral]&nbsp;{print:member point(point/$MOD[pointgroup])}</dd>
+                </dl>
+                {/if}
+                <dl class="clear">
+                    <dt>商品评价：</dt>
+                    <dd>
+                        <span class="start start{print get_star($detail[grade],5)} float_left mt5"></span>
+                        &nbsp;&nbsp;<a href="javascript:show_product_comment();">已有$detail[comments]人评论</a>
+                    </dd>
+                </dl>
+
+                <dl class="clear">
+                    <dt>库存数量：</dt>
+                    <dd>$detail[stock] 件</dd>
+                </dl>
+
+                {get:product attrs=get_buyattr(pid/$pid)}
+                <div data-type="buyattr">
+                    <dl class="clear">
+                        <dt>{$attrs[name]}：</dt>
+                        <dd>
+                            <select name="buyattr" data-id="$attrs[id]" data-name="$attrs[name]">
+                                <option value="$attr_val">选择商品{$attrs[name]}</option>
+                                {loop $attrs[value] $i $attr_val}
+                                <option value="$i">$attr_val</option>
+                                {/loop}
+                            </select>
+                        </dd>
+                    </dl>
+                </div>
+                {/get}
+
+                <dl class="clear">
+                    <dt>购买数量：</dt>
+                    <dd>
+                        <div class="computing">
+                            <input id="params" type="hidden" data-pid="$detail[pid]" data-stock="$detail[stock]">
+                            <input id="quantity_dec_btn" type="button" class="reduce" />
+                            <input id="quantity_txt" type="text" class="num" value="1" />
+                            <input id="quantity_add_btn" type="button" class="add" />
+                        </div>
+                        <div class="action-btn clear">
+                            <a id="once_order_btn" class="buy-btn" href="{url product/member/ac/order/pid/$pid}" title="点击此按钮，到下一步确认购买信息。">立刻购买</a>
+                            {if $detail[p_style]==1}<a id="add_cart_btn" class="add-btn" title="加入购物车" href="#">加入购物车</a>{/if}
+                            {if $detail[p_style]==2}<a id="add_cart_btn_disable" class="add-btn-disable" href="#" >加入购物车</a>{/if}
+                        </div>
+                    </dd>
+                </dl>
+                <dl class="clear">
+                    <dt>付款方式：</dt>
+                    <dd>
+                        余额支付
+                        <!--{loop $PAY->get_pc_payments() $payment}-->
+                        {print lang('pay_name_'.$payment)}
+                        <!--{/loop}-->
+                    </dd>
+                </dl>
+                {if $detail[tag_keyword]}
+                <dl class="clear">
+                    <dt>商品标签：</dt>
+                    <dd>
+                        {eval $i=0;}
+                        {loop $tags $tval}
+                        <a href="{url product/search/tag/$tval}" target="_blank">$tval</a>
+                        {eval if(++$i>=3) break;}
+                        {/loop}
+                        {if count($tags)>3}
+                        <a href="#" id="tag_more" rel="tag_more_box"><span class="arrwd-ico">更多&nbsp;</span></a>
+                        {/if}
+                    </dd>
+                </dl>
+                {if count($tags)>3}
+                <ul id="tag_more_box" class="dropdown-menu none">
+                    {eval $i=0;}
+                    {loop $tags $tval}
+                    {eval if($i++<=3) continue;}
+                    <li><a href="{url product/search/tag/$tval}" target="_blank">$tval</a></li>
+                    {/loop}
+                </ul>
+                <script type="text/javascript">
+                $("#tag_more").powerFloat({reverseSharp:true});
+                </script>
+                {/if}
+                {/if}
+                {if $_CFG[sharecode]}
+                <dl class="clear">
+                    <dt>分&nbsp;&nbsp;享&nbsp; 到：</dt>
+                    <dd>
+                        $_CFG[sharecode]
+                    </dd>
+                </dl>
+                {/if}
+            </div>
+            <div class="shopinfo">
+                <div class="mainrail rail-border-3">
+                    <div class="sub-mainrail">
+                        <h3 class="sub-title">店铺信息</h3>
+                        <table class="side_subject_field_list" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td width="60">店主:</td>
+                                <td width="*">$subject[owner] <a href="javascript:send_message($ownerid[uid]);"><img src="{URLROOT}/{$_G[tplurl]}images/product/shop/web_mail.gif" alt="发站内信" /></a></td>
+                            </tr>
+                            <tr>
+                                <td>综合评分:</td>
+                                <td>
+                                    <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+                                    <img src="{URLROOT}/{$_G[tplurl]}images/product/shop/heart_{print get_star($subject[avgsort],$reviewcfg[scoretype])}.gif" title="{print get_star($subject[avgsort],$reviewcfg[scoretype])}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>创店时间:</td>
+                                <td>{date $subject[addtime],'Y-m-d'}</td>
+                            </tr>
+                            <tr>
+                                <td>所在地区:</td>
+                                <td>$_CITY[name] {print:modoer area(aid/$subject[aid])}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clear"></div>
+
+    </div>
+
+    <div class="item-left mt10" style="width:200px;">
+        <div class="mainrail rail-border-3">
+            <div class="sub-mainrail">
+                <h3 class="sub-title">扫描二维码</h3>
+                <center><img src="{print get_qrcode(url("product/detail/pid/$pid",'',1))}"></center>
+            </div>
+        </div>
+        <div class="item-left mt10" style="width:200px;">
+            <div class="mainrail rail-border-3">
+                <div class="sub-mainrail">
+                    <h3 class="sub-title">热销产品</h3>
+                    <div class="hot_p">
+                        <!--{eval $i=1;}-->
+                        <!--{get:modoer val=sql(sql/SELECT pid,subject,picture,thumb,price,promote,promote_start,promote_end FROM dbpre_product WHERE sid=$subject[sid] AND status=1 AND is_on_sale=1 ORDER BY sales DESC/rows/10)}-->
+                        <dl>
+                            <dt><a href="{url product/detail/pid/$val[pid]}" title="$val[subject]">$val[subject]</a></dt>
+                            <dd class="pic">
+                                <a href="{url product/detail/pid/$val[pid]}"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" title="$val[subject]" /></a>
+                                <sup {if $i>=4}class="gray"{/if}>$i</sup>
+                            </dd>
+                            <dd class="price">
+                                <strong>&yen;{print:product price(product/$val)}</strong>
+                            </dd>
+                        </dl>
+                        <!--{eval $i++;}-->
+                        <!--{/get}-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="item-right mt10" style="width:740px;">
+
+        <a name="tab"></a>
+        <ul class="sieve_out tabs mt">
+            <li><a href="javascript:void(0)" class="on" id="product_content">商品详情</a></li>
+            <!--{if check_module('comment')}--><li><a href="javascript:void(0)" id="product_comment">累计评价</a></li><!--{/if}-->
+            <li><a href="javascript:void(0)" id="product_orders">成交记录</a></li>
+        </ul>
+        <div class="clear"></div>
+        <div class="sub-con dis">
+            <div class="field">
+                <table class="detail_field" border="0" cellspacing="0" cellpadding="0">
+                    {if $detail[weight]}
+                    <tr>
+                        <td class="key" align="right">重量：</td>
+                        <td width="*">$detail[weight] 克</td>
+                    </tr>
+                    {/if}
+                    {if $detail[shape_code]}
+                    <tr>
+                        <td class="key" align="right">条形码：</td>
+                        <td width="*">$detail[shape_code]</td>
+                    </tr>
+                    {/if}
+                    $detail_field
+                </table>
+            </div>
+            <div class="content mt">
+                <div class="c">$detail[content]</div>
+            </div>
+        </div>
+        <!--{if check_module('comment')}-->
+        <div class="sub-con p_commonts">
+            <!--{eval $comment_modcfg = $_G['loader']->variable('config','comment');}-->
+            {eval $_G['loader']->helper('form');}
+            <!--{if !$comment_modcfg['hidden_comment']}-->
+            <div id="commentlist"></div>
+            <script type="text/javascript">
+                $(document).ready(function() { get_p_comment('product','$pid',1); });
+            </script>
+            <!--{/if}-->
+        </div>
+        <!--{/if}-->
+        <div class="sub-con">
+            <table width="900" cellspacing="0" cellpadding="0" class="table_common">
+                <tr class="bg2">
+                    <th>买家</th>
+                    <th>购买价</th>
+                    <th>购买数量</th>
+                    <th>购买时间</th>
+                </tr>
+                <!--{get:product val=getorder(pid/$pid/rows/10/orderby/addtime desc)}-->
+                <tr>
+                    <td>$val[buyername]</td>
+                    <td>$val[price]</td>
+                    <td>$val[quantity]</td>
+                    <td>{date $val[addtime],'Y-m-d'}</td>
+                </tr>
+                <!--{/get}-->
+            </table>
+        </div>
+        <div class="feature_box">
+            <div class="service_reminder">
+                <h3>温馨提示<span>Reminder</span></h3>
+                <p>请注意，由于色差、批次、包装更换等原因，您收到的货品可能与图片不完全一致，请您以收到的商品实物为准，同时我们会尽量做到及时更新，由此给您带来不便请多谅解，谢谢！</p>
+                <h3>免责声明<span>Disclaimer</span></h3>
+                <p>网站所展示的宝贝供求信息由买卖双方自行提供，其真实性、准确性和合法性由信息发布人负责。网站不提供任何保证，并不承担任何法律责任。</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="{URLROOT}/static/images/jqzoom.css">
+<script type="text/javascript" src="{URLROOT}/static/javascript/jquery.jqzoom-core-pack.js"></script>
+<script type="text/javascript">
+
+function show_product_comment() {
+    $('#product_comment').mouseover();
+    location.hash = "tab";
+}
+
+$(document).ready(function() {
+
+    $("#spec-list").jdMarquee({
+        deriction:"left",
+        width:325,
+        height:65,
+        step:1,
+        speed:2,
+        delay:10,
+        control:true,
+        _front:"#spec-right",
+        _back:"#spec-left"
+    });
+
+    $("#spec-list img").bind("mouseover",function(){
+        $(this).css({
+            "border":"2px solid #ff6600",
+            "padding":"1px"
+        });
+    }).bind("mouseout",function(){
+        $(this).css({
+            "border":"1px solid #ccc",
+            "padding":"2px"
+        });
+    });
+
+    $('.jqzoom').jqzoom({
+            zoomType: 'standard',
+            lens: true,
+            preloadImages: false,
+            position: 'right',
+            alwaysOn: false,
+            zoomWidth: 320,
+            zoomHeight: 250
+    });
+
+    if(location.hash == '#commentend') {
+        show_product_comment();
+    }
+});
+</script>
+<!--{template 'footer', 'item', $subject[templateid]}-->

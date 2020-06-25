@@ -1,0 +1,112 @@
+<style>
+/*商品详细页*/
+.product_detail{margin-bottom:40px;}
+.product_detail .title{padding:0 0 10px;}
+.product_detail .title h2{font:bold 14px/30px '宋体';color:#000;}
+.product_detail .title .des{color:#c00;}
+
+.detail_field td { padding:5px;}
+.detail_field td.key { width:100px; }
+
+.detail_box{float:right;width:580px;}
+.detail .railtitle{margin-bottom:10px;}
+.detail a:link,.detail a:visited{color:#06c;}
+.detail a:hover{color:#c00;}
+.detail dl { margin:0;padding:0; }
+.detail dt, .detail dd{float:left;line-height:30px;*line-height:25px;}
+.detail dt{width:65px;text-align:left;}
+.detail dd{width:auto;margin-left:5px;color:#333;}
+.detail dd .start{height:15px;}
+
+.product-buyattr-list{ margin-bottom:5px; }
+.product-buyattr-list:after { content:" "; display:block; height:0; clear:both; visibility:hidden; }
+.product-buyattr-list-item{ display:inline-block; margin-bottom:5px; }
+.product-buyattr-list-item >a { display:block; border:1px solid #ddd; padding:1px 4px; margin-right:3px; text-align:center; min-width:30px; }
+.product-buyattr-list-item > a.selected,
+.product-buyattr-list-item > a:hover { border:1px solid #A90F0F; }
+
+
+.specific_info { float:left; width:380px; }
+	.specific_info .price{margin-right:5px;color:#C00;}
+	.specific_info .point{font-weight:bold;color:#C00;}
+.shopinfo { float:right; width:200px; }
+
+.gallery { float:left; width:355px; margin-right:0px; }
+.gallery .pic { margin-bottom:10px; border:1px solid #ddd; height:255px;width:350px;text-align:center; }
+.gallery .pic a{ display:block; }
+
+.f16{font-size:16px;}
+.f18{font-size:18px;}
+.f20{font-size:20px;}
+.f24{font-size:24px;}
+
+.sieve_out {border-bottom:1px solid #A60000;height:30px;}
+.sieve_out li{float:left;margin-right:10px;_width:90px;}
+.sieve_out a{display:block;padding:0 20px;height:29px;line-height:29px;overflow:hidden;border:1px solid #ccc;border-bottom:0;background:#fff;color:#000;text-decoration:none;}
+.sieve_out .on{font-size:14px;font-weight:bold;border:1px solid #A60000;border-bottom:0;_width:60px;}
+.sub-con{padding:10px;display:none}
+.dis{display:block}
+
+.computing{display:inline;}
+.computing input{vertical-align:middle;}
+.computing .reduce,.computing .add,.list .reduce,.list .add{width:14px;height:13px;border:0;cursor:pointer;}
+.computing .reduce,.list .reduce{background:url({ITEM_TPL_DIR}/images/product/dec.png) no-repeat;}
+.computing .add,.list .add{background:url({ITEM_TPL_DIR}/images/product/add.png) no-repeat;}
+.computing .num,.list .num{width:30px;height:18px;line-height:18px;margin:0 4px;border:1px solid #c9c9c9;text-align:center;}
+
+.action-btn{margin-top:10px;}
+.action-btn a{overflow:hidden;text-indent:-999em;}
+.buy-btn{display:block;float:left;width:126px;height:36px;background:url({ITEM_TPL_DIR}/images/product/cart_btn.png) no-repeat 0 -81px;margin-right:15px;}
+.add-btn{display:block;float:left;width:126px;height:36px;background:url({ITEM_TPL_DIR}/images/product/cart_btn.png) no-repeat;}
+.add-btn-disable{display:block;float:left;width:126px;height:36px;background:url({ITEM_TPL_DIR}/images/product/cart_btn.png) no-repeat 0 -41px;}
+
+/*图片浏览*/
+.list-h li{ float:left;}
+#spec-n5{width:350px; height:65px; overflow:hidden; }
+#spec-left{ background:url({URLROOT}/templates/main/default/images/product/left.gif) no-repeat; width:10px; height:45px; float:left; cursor:pointer; margin-top:5px; margin-right:3px;}
+#spec-right{background:url({URLROOT}/templates/main/default/images/product/right.gif) no-repeat; width:10px; height:45px; float:left;cursor:pointer; margin-top:5px;}
+#spec-list{ width:325px; float:left; overflow:hidden; margin-left:2px; display:inline; }
+#spec-list ul li{ float:left; margin-right:0px; display:inline; width:65px;}
+#spec-list ul li img{ padding:2px ; border:1px solid #ccc; width:55px; height:55px;}
+
+.p_commonts{padding-bottom:10px;border-bottom:1px #ddd dotted;margin-bottom:10px;zoom:1;overflow:hidden;}
+.p_commonts_l{float:left;width:66px;height:66px;padding-right:10px;text-align:center;color:#FF6600;background:url({ITEM_TPL_DIR}/images/product/commont_face.png) no-repeat;font-size:14px;font-weight:700;overflow:hidden;}
+.p_commonts_l img {display:block;width:62px;height:62px;padding:2px;}
+.p_commonts_l span{font-size:18px;font-family:Arial, Helvetica, sans-serif;}
+.p_commonts_r{float:right;width:860px;}
+.p_commonts_r .titex{line-height:20px;padding-bottom:6px;}
+.p_commonts_r .titex p{background:#f0f0f0;padding:3px 10px;color:#333;}
+.p_commonts_r .titex img{vertical-align:middle;}
+.p_commonts_r .titex a{color:#f60;}
+.p_commonts_r .titex b{color:red;font-weight:700;}
+.p_commonts_r .titex h3{color:#666;text-indent:10px;font-size:12px;margin-top:5px;}
+.p_commonts_r .titex span{color:#666;font-weight:bold;text-indent:10px;}
+.p_commonts_r .titex em{font-style:normal;}
+
+.table_common{width:100%;overflow:hidden;}
+.table_common table{width:100%;border-collapse:collapse;}
+.table_common th{padding:5px 0;color:#a3a3a3;font-weight:normal;}
+.table_common td{padding:5px 0;text-align:center;color:#666;border-bottom:1px dotted #d8d8d8;}
+
+.feature_box { padding:0 10px; }
+.feature_box p{line-height:30px;}
+.service_reminder{overflow:hidden;margin-top:10px;}
+.service_reminder h3{margin:20px 0;color:#c00;font-size:12px;margin-bottom:5px;}
+.service_reminder h3 span{color:#999;-webkit-text-size-adjust:none;font:normal 10px Tahoma;margin-left:5px;}
+.service_reminder p{line-height:1.2em;}
+
+.sub-con .content {border-top:1px dashed #ccc;}
+.sub-con .content .c{font-size:14px;line-height:150%;margin:5px;}
+
+.hot_p{overflow:hidden;_zoom:1;}
+.hot_p dd {margin:0;padding:0;}
+.hot_p dl strong{padding-right:8px;color:#c00;font-size:16px;}
+.hot_p dl{margin:0;padding:5px 0;border-bottom:1px solid #f0f0f0;width:183px;overflow:hidden;_zoom:1;}
+.hot_p dl .pic{position:relative;float:left;width:65px;}
+.hot_p dl .pic sup{position:absolute;left:3px;top:3px;padding-left:2px;width:18px;height:20px;background:url({ITEM_TPL_DIR}/images/product/bg_spirit.gif) no-repeat 0 -523px;
+    font:bold 11px Tahoma;color:#fff;}
+.hot_p dl .pic sup.gray{background-position:0 -545px;}
+.hot_p dl .pic img{border:1px solid #f7f7f7;padding:2px 1px 1px 2px;width:60px;height:60px;}
+.hot_p dl dt,.hot_p dl .price{float:right;width:110px;line-height:20px;}
+
+</style>

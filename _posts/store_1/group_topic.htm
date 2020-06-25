@@ -1,0 +1,184 @@
+<!--{template 'header', 'item', $subject[templateid]}-->
+<script type="text/javascript" src="{URLROOT}/static/javascript/swfobject.js"></script>
+<div class="item-content">
+
+    <div class="item-left mt10">
+
+        <div class="mainrail rail-border-3">
+            <div class="topic_detail">
+                <div class="topictitle">
+                    <h1>{if $topic[status]<1}[未审核]{/if}$topic[subject]</h1>
+                    <div class="info">
+                        <a href="{url space/index/uid/$topic[uid]}" target="_blank">$topic[username]</a>
+                         ·  <span>{date $topic[dateline]}</span>
+                         ·  <span>点击 $topic[pageview]</span>
+                        <!--{if $user->uid==$topic[uid]||$gmember[usertype]=='1'}-->
+                         ·  <a href="javascript:;"onclick="discussion_topic_edit($topic[tpid]);">编辑</a>
+                         ·  <a href="javascript:;"onclick="discussion_topic_delete($topic[tpid]);">删除</a>
+                         <!--{if $gmember[usertype]=='1'&&$topic[status]>0}-->
+                         ·  <a href="javascript:;"onclick="group_topic_top($topic[tpid]);">{if !$topic[top]}置顶{else}取消置顶{/if}</a>
+                         ·  <a href="javascript:;"onclick="group_topic_digest($topic[tpid]);">{if !$topic[digest]}精华{else}取消精华{/if}</a>
+                         {if !$topic[closed]}
+                         ·  <a href="javascript:;"onclick="group_topic_close($topic[tpid],0);">禁止回复</a>
+                         {else}
+                         ·  <a href="javascript:;"onclick="group_topic_close($topic[tpid],1);"> 允许回复</a>
+                         {/if}
+                         <!--{/if}-->
+                        <!--{/if}-->
+                    </div>
+                    <div class="face">
+                        <a href="{url space/index/uid/$topic[uid]}" target="_blank" title="$topic[username]"><img src="{print get_face($topic[uid])}" alt="$topic[username]"></a>
+                    </div>
+                </div>
+                <div class="topiccontent">
+                    <div id="topic_$topic[tpid]">{print msubb::pares($topic[content], $topic)}</div>
+                    {if $topic['source']}<span style="color:#808080;"><span class="mobile-ico">通过手机发布</span></span>{/if}
+                </div>
+                {if $topic[closed]}<div class="topicclose">当前话题回复功能已被关闭。</div>{/if}
+            </div>
+        </div>
+
+        <!--{if $topic[replies]>0}-->
+        <div class="item-rail mt10">
+            <h3 class="railtitle">回复({$topic[replies]})</h3>
+            <ul class="replylist">
+                <!--{dbres $list $val}-->
+                <li class="reply_detail">
+                    <div class="face">
+                        <a href="{url space/index/uid/$val[uid]}" target="_blank"><img src="{print get_face($val[uid])}" /></a>
+                    </div>
+                    <div class="content">
+                        <div class="replytitle">
+                            <a href="{url space/index/uid/$val[uid]}" target="_blank">$val[username]</a>
+                            {date $val[dateline],'w2style'}
+                           <em>
+                                <!--{if $user->uid==$val[uid]}-->
+                                <a href="javascript:discussion_reply_edit($val[rpid]);">编辑</a>
+                                <a href="javascript:discussion_reply_delete($val[rpid]);">删除</a>
+                                <!--{elseif $user->uid!=$val[uid]}-->
+                                <a href="javascript:discussion_reply_at('reply_content','$val[username]');">回复</a>
+                                <!--{/if}-->
+                            </em>
+                        </div>
+                        <div id="reply_$val[rpid]">{print msubb::pares($val[content], $val)}</div>
+                        {if $val['source']}<span style="color:#808080;"><span class="mobile-ico">通过手机发布</span></span>{/if}
+                    </div>
+                </li>
+                <!--{/dbres}-->
+            </ul>
+            <div class="clear"></div>
+            {if $multipage}<div class="multipage">$multipage</div>{/if}
+        </div>
+        <!--{/if}-->
+
+        <!--{if $topic[status] && !$topic[closed]}-->
+        <div class="item-rail mt10">
+            <h3 class="railtitle">回复一条</h3>
+            <!--{if $postaccess=='3' && $gmember['usertype'] != '1'}-->
+            <div class="messageborder">目前小组处在只读模式，无法回复。</div>
+            <!--{elseif !$gmember && $postaccess!='2'}-->
+            <div class="messageborder">只有小组成员才能发言，请先加入小组。</div>
+            <!--{elseif $gmember['status'] == '0'}-->
+            <div class="messageborder">您目前正在等待审核，无法进行发言。</div>
+            <!--{elseif $gmember['status'] == -1}-->
+            <div class="messageborder">您目前正在禁言期（截止 {date $gmember[bantime],'Y-m-d'}），无法进行发言。</div>
+            <!--{else}-->
+            <div class="discussion_post" style="margin-top:10px;">
+                <script type="text/javascript" src="{URLROOT}/static/javascript/validator.js"></script>
+                <form action="{url group/member/ac/reply/op/post}" method="post" name="myform" onsubmit="return validator(this);">
+                    <input type="hidden" name="tpid" value="$tpid">
+                    <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td width="500"><textarea name="content" id="reply_content" onkeyup="record_charlen(this,$MOD[reply_content_max],'reply_len');" validator="{'empty':'N','errmsg':'请填写回复内容'}"{if !$user->isLogin} onfocus="dialog_login();"{elseif $MOD[reply_seccode]}onfocus="show_seccode();"{/if} ></textarea></td>
+                            <td width="*" valign="top">
+                                <div class="smilies">
+                                    <!--{loop $smilies $value}-->
+                                    <img src="{URLROOT}/static/images/smilies/{$value}.gif" width="20" height="20" onclick="insert_smilies('reply_content','$value');" />
+                                    <!--{/loop}-->
+                                </div>
+                            </td>
+                        </tr>
+                        <!--{if $user->isLogin}-->
+                        <tr>
+                            <td colspan="2">
+                                <div id="reply_images_foo">
+                                    <div>
+                                        <span class="update-img-ico"><a href="javascript:;" onclick="discuss_topic_upimg('reply_content','reply_images_foo');">上传图片</a></span>
+                                        <span class="update-video-ico"><a href="javascript:;" onclick="group_topic_video('reply_content');">添加视频</a></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                        <!--{if $MOD[reply_seccode] && $user->isLogin}-->
+                        <tr>
+                            <td><div id="seccode" class="none" style="float:left;width:80px;position:relative;top:-3px;"></div>
+                                <input type="text" name="seccode" class="t_input" style="width:118px;" onblur="check_seccode(this.value);" onfocus="show_seccode();" validator="{'empty':'N','errmsg':'请输入注册验证码'}" />
+                                <span id="msg_seccode" class="formmessage none"></span>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                        <!--{if $user->isLogin}-->
+                        <tr>
+                            <td colspan="2">
+                                <button type="submit" name="dosubmit">加上去</button>
+                                <span>请将内容控制在 $MOD[reply_content_min] - $MOD[reply_content_max] 个字内，当前输入：<span id="reply_len" class="font_1">0</span></span>
+                            </td>
+                        </tr>
+                        <!--{/if}-->
+                    </table>
+                </form>
+            </div>
+            <!--{/if}-->         
+        </div>
+        <!--{/if}-->
+
+    </div>
+
+    <div class="item-right mt10">
+        <div class="mainrail rail-border-3 group_left_info">
+            {eval if(!$group[icon]) $group[icon]='static/images/z_noimg.gif';}
+            <div class="groupicon"><a href="{url group/$group[gid]}"><img src="{URLROOT}/$group[icon]" alt="$group[groupname]" /></a></div>
+            <div class="groupname">
+                <h3><a href="{url group/$group[gid]}">$group[groupname]</a></h3>
+                <div class="op">
+                    {if !$gmember}
+                        <span><a href="javascript:;" onclick="group_join($group[gid]);">+ 加入小组</a></span>
+                    {elseif $gmember[usertype]=='1'}
+                        <span><a href="{url group/member/ac/group/op/edit/gid/$group[gid]}">* 管理小组</a></span>
+                    {else}
+                        <span><a href="javascript:;" onclick="group_quit($group[gid]);">- 退出小组</a></span>
+                    {/if}
+                </div>
+            </div>
+            <div class="groupcount">
+                <ul>
+                    <li class="rt"><span class="num"><a href="{url group/$group[gid]}">$group[topics]</a></span><span>话题</span></li>
+                    <li><span class="num"><a href="{url group/$group[gid]/op/memberlist}">$group[members]</a></span><span>成员</span></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="mainrail rail-border-3 mt10">
+            <div class="sub-mainrail">
+                <h3 class="sub-title">最新话题</h3>
+                <ul class="rail-list side_topiclist">
+                    <!--{get:modoer val=table(table/dbpre_group_topic/where/gid=$topic[gid] And status=1/orderby/dateline DESC/rows/10)}-->
+                    <li><a title="$val[subject]" href="{url group/topic/id/$val[tpid]}">{sublen $val[subject],16}</a></li>
+                    <!--{getempty(val)}-->
+                    <li>暂无信息</li>
+                    <!--{/get}-->
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    group_show_video();
+});
+</script>
+<!--{template 'footer', 'item', $subject[templateid]}-->

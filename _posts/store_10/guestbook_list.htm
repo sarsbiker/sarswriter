@@ -1,0 +1,66 @@
+<!--{eval 
+    $_HEAD['title'] = $fullname . '的' . $filter_arr_lng[$filter] . '留言列表';
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+<div class="item-content">
+
+    <div class="item-left mt10">
+
+        <div class="item-rail">
+            <h3 class="railtitle">留言($total)</h3>
+
+            <div class="mainrail">
+                <!--{dbres $list $val}-->
+                <div class="guestbook" id="guestbook_$val[guestbookid]">
+                    <div class="title">
+                        <em>
+                            <!--{if $is_owner}-->
+                            <a href="javascript:reply_guestbook($val[guestbookid]);">回复</a>&nbsp;
+                            <a href="javascript:delete_guestbook($val[guestbookid]);">删除</a>
+                            <!--{elseif $user->isLogin && $user->uid==$val[uid]}-->
+                            <a href="javascript:edit_guestbook($val[guestbookid]);">编辑</a>&nbsp;
+                            <a href="javascript:delete_guestbook($val[guestbookid]);">删除</a>
+                            <!--{/if}-->
+                        </em>
+                        <h5><span class="member-ico"><a href="{url space/index/uid/$val[uid]}">$val[username]</a></span>&nbsp;在&nbsp;{date $val[dateline],'Y-m-d H:i'}&nbsp;留言：</h5>
+                    </div>
+                    <div class="body">
+                        <div class="content" id="guestbook_content_$val[guestbookid]">{print nl2br($val[content])}</div>
+                        <!--{if $val[replytime]}-->
+                        <div class="reply" id="guestbook_reply_$val[guestbookid]">回复：{print nl2br($val[reply])}&nbsp;&nbsp;<span class="font_3">{date $val[replytime],'m-d H:i'}</span></div>
+                        <!--{/if}-->
+                    </div>
+                    
+                </div>
+                <!--{/dbres}-->
+                <!--{if $multipage}--><div class="multipage">$multipage</div><!--{/if}-->
+                <!--{if !$total}--><div class="messageborder">近期没有会员进行留言</a>。</div><!--{/if}-->
+            </div>
+
+        </div>
+
+        <!--{if !$is_owner}-->
+        <div class="item-rail mt10">
+            <h3 class="railtitle">我要留言</h3>
+            <div id="guestbook_post_foo" style="margin-top:10px;"></div>
+            <!--{if $user->isLogin}-->
+            <script type="text/javascript">
+            <!--
+                post_guestbook($subject['sid'], 'guestbook_post_foo');
+            //-->
+            </script>
+            <!--{else}-->
+            <div class="messageborder">目前您没有登录网站，请先<a href="javascript:;"onclick="dialog_login();">登录</a>。</div>
+            <!--{/if}-->
+        </div>
+        <!--{/if}-->
+
+    </div>
+
+    <div class="item-right mt10">
+        <!--{template 'part_side', 'item', $subject[templateid]}-->
+    </div>
+    <div class="clear"></div>
+
+</div>
+<!--{template 'footer', 'item', $subject[templateid]}-->

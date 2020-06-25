@@ -1,0 +1,63 @@
+<!--{template 'header', 'item', $subject[templateid]}-->
+<script type="text/javascript">
+function coupon_effect(couponid) {
+	$.post(Url('coupon/detail/do/effect/id/'+couponid), 
+	{ effect:'effect1',in_ajax:1 },
+	function(result) {
+        if(result == null) {
+			alert('信息读取失败，可能网络忙碌，请稍后尝试。');
+        } else if (result.match(/\{\s+caption:".*",message:".*".*\s*\}/)) {
+            myAlert(result);
+		} else if (result == 'OK') {
+            $('#btn_effect1').html('对我有用!');
+        } 
+	});
+}
+</script>
+<div class="item-content">
+
+    <div class="item-left mt10">
+
+        <div class="item-rail">
+            <h3 class="railtitle">优惠券编号：$couponid</h3>
+
+            <div class="coupon-detail">
+                <h1 class="subject">[{$category[$detail[catid]][name]}]&nbsp;$detail[subject]</h1>
+                <div class="info">发布时间：{date $detail[dateline],'Y-m-d'}&nbsp;&nbsp;&nbsp;&nbsp;人气：$detail[pageview]&nbsp;&nbsp;&nbsp;&nbsp;打印：$detail[prints]&nbsp;&nbsp;&nbsp;&nbsp;评论：$detail[comments]</div>
+
+                <div class="des">
+                    <ul>
+                        <li>有效时间：{date $detail[starttime],'Y-m-d'} ~ {date $detail[endtime],'Y-m-d'}</li>
+                        <li>优惠说明：$detail[des]</li>
+                        <!--{if $_CFG[sharecode]}--><li><div class="float_left">分享信息：</div>$_CFG[sharecode]<div class="clear"></div></li><!--{/if}-->
+                    </ul>
+                </div>
+
+                <div class="print">
+                    <a class="abtn1" href="{url coupon/print/id/$couponid}"><span>打印此券</span></a>
+                    {if $detail[sms_text] && $MOD[sendsms] && check_module('sms')}
+                    <a class="abtn2" href="javascript:void(0);" onclick="send_coupon_sms($couponid);"><span>发送到手机</span></a>
+                    {/if}
+                    <span id="btn_effect1"><a class="abtn2" href="javascript:coupon_effect($couponid);"><span>对我有用</span></a></span>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="picture"><img src="{URLROOT}/$detail[picture]" alt="$detail[subject]" /></div>
+
+                <div class="content">
+                    <p>$detail[content]</p>
+                </div>
+            </div>
+        </div>
+
+        <!--{hook 'load_comment', $comment_cfg}-->
+
+    </div>
+
+    <div class="item-right mt10">
+        <!--{template 'part_side', 'item', $subject[templateid]}-->
+    </div>
+    <div class="clear"></div>
+
+</div>
+<!--{template 'footer', 'item', $subject[templateid]}-->

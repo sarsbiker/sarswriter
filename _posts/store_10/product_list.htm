@@ -1,0 +1,131 @@
+<!--{eval
+    $_HEAD['title'] = $subject['name'].$subject['subname'] . '的产品' . ($catid ? $_CFG['titlesplit'] . $category[$catid]['name'] : '');
+}-->
+<!--{template 'header', 'item', $subject[templateid]}-->
+
+<style>
+
+.major .shoplist{width:700px;margin:15px;overflow:hidden;}
+.major .shoplist li{width:175px;height:220px;float:left;}
+.major .pic{width:164px;margin:0 auto;}
+.major .pic img{width:150px;height:150px;}
+.major .pic a{display:block;width:150px;height:150px;padding:7px;}
+.major .pic a:hover{}
+.major h3{width:164px;height:30px;text-align:center;overflow:hidden;line-height:30px;font-weight:normal;font-size:12px;}
+.major h3 a{color:#3d3f3e;text-decoration:none;}
+.major h3 a:hover{text-decoration:underline;}
+.major p{width:164px;color:#fe5504;font-weight:bold;font-size:14px;text-align:center;}
+
+.major .more{font-family:"宋体";text-align:right;padding-right:30px;margin-bottom:20px;}
+.major .more a{color:#fff;padding:2px 4px;background:#000;}
+.major .more a:hover{background:#777;}    
+
+.submenu { list-style:square;margin:0;padding-left:22px;}
+.submenu li{line-height:16px;padding-left:-5px;padding:0;}
+.submenu li a{color:#3d3f3e;text-decoration:none;}
+.submenu li a:hover{font-weight:bold;}
+.submenu li a.active{font-weight:bold;color:#cc0000;}
+
+
+</style>
+<div class="item-content">
+
+    <div class="item-left mt10">
+        <!--{if !$keyword && $_GET[page]<=1}-->
+        <div class="item-rail mb10">
+            <h3 class="railtitle">热销商品</h3>
+            <div class="major">
+                <ul class="shoplist">
+                    {get:modoer val=table(table/dbpre_product/select/pid,subject,picture,thumb,price/where/sid=$sid AND status=1 AND is_on_sale=1/orderby/sales DESC/rows/4)}
+                    <li>
+                        <div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+                        <h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+                        <p>&yen;$val[price]</p>
+                    </li>
+                    {/get}
+                </ul>
+            </div>
+        </div>
+        <!--{/if}-->
+        <div class="item-rail">
+            <h3 class="railtitle">商品列表</h3>
+            <div class="major">
+                <!--{if $total}-->
+                <ul class="shoplist">
+                    <!--{dbres $list $val}-->
+                    <li>
+                        <div class="pic"><a href="{url product/detail/pid/$val[pid]}" target="_blank"><img src="{URLROOT}/{if $val[thumb]}$val[thumb]{else}static/images/noimg.gif{/if}" width="150" height="150" /></a></div>
+                        <h3><a href="{url product/detail/pid/$val[pid]}" target="_blank">$val[subject]</a></h3>
+                        <p>&yen;$val[price]</p>
+                    </li>
+                    <!--{/dbres}-->
+                </ul>
+                <!--{else}-->
+                <div class="messageborder">
+                    <span class="msg-ico">暂时没有相关产品信息。</span>
+                </div>
+                <!--{/if}-->
+            </div>
+            <!--{if $multipage}--><div class="multipage">$multipage</div><!--{/if}-->
+        </div>
+
+    </div>
+
+    <div class="item-right mt10">
+        <div class="mainrail rail-border-3">
+            <div class="sub-mainrail">
+                <h3 class="sub-title">店铺信息</h3>
+                <table class="side_subject_field_list" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="60">店主:</td>
+                        <td width="*">$subject[owner] <a href="javascript:send_message($ownerid[uid]);"><img src="{URLROOT}/{$_G[tplurl]}images/product/shop/web_mail.gif" alt="发站内信" /></a></td>
+                    </tr>
+                    <tr>
+                        <td>综合评分:</td>
+                        <td>
+                            <!--{eval $reviewcfg = $_G['loader']->variable('config','review');}-->
+                            <img src="{URLROOT}/{$_G[tplurl]}images/product/shop/heart_{print get_star($subject[avgsort],$reviewcfg[scoretype])}.gif" title="{print get_star($subject[avgsort],$reviewcfg[scoretype])}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>商品数量:</td>
+                        <td>$total</td>
+                    </tr>
+                    <tr>
+                        <td>创店时间:</td>
+                        <td>{date $subject[addtime],'Y-m-d'}</td>
+                    </tr>
+                    <tr>
+                        <td>所在地区:</td>
+                        <td>$_CITY[name] {print:modoer area(aid/$subject[aid])}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="mainrail rail-border-3">
+            <div class="sub-mainrail">
+                <h3 class="sub-title">商品分类</h3>
+                <ul class="submenu">
+                    <li><a {if !$catid} class="active"{/if}href="{url product/shop/sid/$sid}">全部商品</a></li>
+                    {get:product val=category(sid/$sid)}
+                    <li><a {if $catid==$val[catid]} class="active"{/if} href="{url product/shop/sid/$sid/catid/$val[catid]}">$val[name]</a></li>
+                    {/get}
+                </ul>
+                <h3 class="sub-title">店内搜索</h3>
+                <div class="web_search">
+                    <form name="keyword" method="get" action="{URLROOT}/index.php">
+                        <input type="hidden" name="m" value="product" />
+                        <input type="hidden" name="act" value="shop" />
+                        <input type="hidden" name="sid" value="$sid" />
+                        <input type="hidden" name="catid" value="$catid" />
+                        <input class="text width4" type="text" name="keyword" value="$keyword" />
+                        <input class="btn" type="submit" value="搜" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+
+</div>
+<!--{template 'footer', 'item', $subject[templateid]}-->
